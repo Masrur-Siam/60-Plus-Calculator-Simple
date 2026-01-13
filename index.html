@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>All Calculetor</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalcHub BD | All-in-One Calculator Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        bd: {
+                            green: '#006a4e',
+                            darkGreen: '#004d38',
+                            red: '#f42a41',
+                            light: '#e6f2ef',
+                            surface: '#f0fdf9'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(0, 106, 78, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f8fafc; }
+        
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Animations */
+        .tool-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tool-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(0, 106, 78, 0.15); border-color: #006a4e; }
+        
+        .sidebar-link { position: relative; transition: all 0.2s; }
+        .sidebar-link.active { background: linear-gradient(to right, #e6f2ef, #ffffff); color: #006a4e; font-weight: 600; border-right: 3px solid #f42a41; }
+        .sidebar-link:hover:not(.active) { background-color: #f8fafc; color: #006a4e; }
+        
+        .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+
+        /* Custom Input */
+        .input-group:focus-within label { color: #006a4e; }
+        .input-group:focus-within i { color: #006a4e; }
+        .custom-input:focus { outline: none; border-color: #006a4e; box-shadow: 0 0 0 3px rgba(0, 106, 78, 0.1); }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body, #app, main { height: auto; overflow: visible; background: white; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row antialiased">
+
+    <!-- Mobile Header with Search -->
+    <div class="md:hidden glass-header border-b border-slate-200 z-50 no-print sticky top-0">
+        <div class="flex justify-between items-center p-4">
+            <div class="flex items-center font-bold text-slate-800 text-lg tracking-tight">
+                <div class="w-8 h-8 rounded-lg bg-bd-green text-white flex items-center justify-center mr-2 shadow-lg shadow-bd-green/30">
+                    <i class="fa-solid fa-calculator text-sm"></i>
+                </div>
+                CalcHub<span class="text-bd-red">BD</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-slate-500 hover:text-bd-green transition-colors p-2 rounded-lg hover:bg-bd-light">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- Mobile Search Bar -->
+        <div class="px-4 pb-4">
+            <div class="relative group">
+                <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400 text-sm"></i>
+                <input type="text" id="mobileSearch" placeholder="Search 60+ tools..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-bd-green focus:ring-2 focus:ring-bd-green/10 transition-all placeholder-slate-400">
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 w-72 bg-white border-r border-slate-200 flex flex-col z-40 transition-transform duration-300 ease-in-out no-print shadow-2xl md:shadow-none">
+        <div class="p-6 border-b border-slate-50 hidden md:flex items-center">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-bd-green to-bd-darkGreen text-white flex items-center justify-center mr-3 shadow-lg shadow-bd-green/20">
+                <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-xl tracking-tight text-slate-900 leading-none">CalcHub<span class="text-bd-red">BD</span></h1>
+                <span class="text-[10px] font-bold text-bd-green uppercase tracking-wider bg-bd-light px-1.5 py-0.5 rounded mt-1 inline-block">Pro Suite</span>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <div class="relative group">
+                <i class="fa-solid fa-search absolute left-3 top-3.5 text-slate-400 group-focus-within:text-bd-green transition-colors text-sm"></i>
+                <input type="text" id="globalSearch" placeholder="Find tool..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-bd-green focus:ring-2 focus:ring-bd-green/10 transition-all placeholder-slate-400">
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-3 py-2 space-y-1" id="navCategories">
+            <!-- Categories injected here -->
+        </nav>
+        
+        <div class="p-4 border-t border-slate-100">
+            <div class="bg-gradient-to-r from-bd-light to-white rounded-xl p-4 flex items-center gap-3 border border-bd-green/10">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-bd-green shadow-sm text-lg border border-slate-100">🇧🇩</div>
+                <div>
+                    <p class="text-xs font-bold text-bd-green">Developed by M45RUR 514M</p>
+                    <p class="text-[10px] text-slate-500">60+ Localized Tools</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity opacity-0"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#f8fafc]">
+        <!-- Top Bar (Desktop) -->
+        <header class="glass-header border-b border-slate-200 px-6 py-4 hidden md:flex justify-between items-center shadow-sm z-10 no-print sticky top-0">
+            <div>
+                <h2 id="pageTitle" class="text-lg font-bold text-slate-800">Dashboard</h2>
+                <p id="pageDesc" class="text-xs text-slate-500 font-medium">Select a category to explore tools.</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="app.navToHome()" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-bd-green hover:bg-bd-light rounded-lg transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-grid-2"></i> <span class="hidden sm:inline">Dashboard</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic View Container -->
+        <div id="viewContainer" class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth relative">
+            <!-- Content injected via JS -->
+        </div>
+    </main>
+
+    <!-- JS Application Logic -->
+    <script>
+        // --- Helpers ---
+        const formatBDT = (num) => {
+            if (isNaN(num)) return '৳0.00';
+            return new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT' }).format(num);
+        };
+        const formatNum = (num, decimals = 2) => {
+            if (isNaN(num)) return '0';
+            // Remove trailing zeros if integer
+            const str = num.toFixed(decimals);
+            return parseFloat(str).toString(); 
+        };
+
+        // --- 1. Tool Data & Configuration (ALL 60+ TOOLS PRESERVED) ---
+        const tools = [
+            // --- BASIC CALCULATORS ---
+            { id: 'simple-calc', title: 'Simple Calculator', category: 'Basic', icon: 'fa-plus-minus', color: 'text-blue-600', bg: 'bg-blue-100', type: 'calculator', 
+              desc: 'Basic arithmetic operations.',
+              fields: [{id:'a', label:'First Number', type:'number'}, {id:'b', label:'Second Number', type:'number'}],
+              logic: (v) => `<div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-white p-3 rounded border">Sum: <span class="font-bold text-slate-800">${formatNum(v.a+v.b)}</span></div>
+                    <div class="bg-white p-3 rounded border">Diff: <span class="font-bold text-slate-800">${formatNum(v.a-v.b)}</span></div>
+                    <div class="bg-white p-3 rounded border">Prod: <span class="font-bold text-slate-800">${formatNum(v.a*v.b)}</span></div>
+                    <div class="bg-white p-3 rounded border">Quot: <span class="font-bold text-slate-800">${v.b!==0 ? formatNum(v.a/v.b) : '∞'}</span></div>
+                  </div>` },
+            
+            { id: 'percent-calc', title: 'Percentage Calc', category: 'Basic', icon: 'fa-percent', color: 'text-blue-600', bg: 'bg-blue-100', type: 'calculator',
+              fields: [{id:'total', label:'Total Value', type:'number'}, {id:'val', label:'Value', type:'number'}],
+              logic: (v) => v.total===0 ? 'Total cannot be 0' : `<div class="text-xl">${formatNum(v.val)} is <b class="text-blue-600">${((v.val/v.total)*100).toFixed(2)}%</b> of ${formatNum(v.total)}</div>` },
+
+            { id: 'ratio-calc', title: 'Ratio Calculator', category: 'Basic', icon: 'fa-scale-balanced', color: 'text-blue-600', bg: 'bg-blue-100', type: 'calculator',
+              fields: [{id:'a', label:'A', type:'number'}, {id:'b', label:'B', type:'number'}, {id:'c', label:'C', type:'number'}],
+              logic: (v) => `If A:B is ${v.a}:${v.b}, then for C=${v.c}, D is <b>${((v.b*v.c)/v.a).toFixed(2)}</b>` },
+
+            { id: 'avg-calc', title: 'Average Calculator', category: 'Basic', icon: 'fa-chart-bar', color: 'text-blue-600', bg: 'bg-blue-100', type: 'generator',
+              inputs: [{id:'nums', label:'Numbers (comma separated)', type:'text'}],
+              generate: (v) => {
+                  const arr = v.nums.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+                  if(!arr.length) return 'Enter valid numbers';
+                  const sum = arr.reduce((a,b)=>a+b,0);
+                  return `Count: ${arr.length} <br>Mean: <b>${(sum/arr.length).toFixed(2)}</b>`;
+              } },
+
+            { id: 'unit-conv', title: 'Unit Converter', category: 'Basic', icon: 'fa-ruler-combined', color: 'text-blue-600', bg: 'bg-blue-100', type: 'calculator',
+              fields: [{id:'val', label:'Value', type:'number'}, {id:'type', label:'Convert', type:'select', options:['Meters to Feet','Feet to Meters','Kg to Lbs','Katha to Sq.Ft','Bigha to Katha','Celsius to Fahrenheit']}],
+              logic: (v) => {
+                  let res = 0, u = '';
+                  if(v.type.startsWith('Meters')) { res = v.val * 3.28084; u='ft'; }
+                  else if(v.type.startsWith('Feet')) { res = v.val / 3.28084; u='m'; }
+                  else if(v.type.startsWith('Kg')) { res = v.val * 2.20462; u='lbs'; }
+                  else if(v.type.startsWith('Katha')) { res = v.val * 720; u='sq.ft'; }
+                  else if(v.type.startsWith('Bigha')) { res = v.val * 20; u='Katha'; }
+                  else if(v.type.startsWith('Celsius')) { res = (v.val * 9/5) + 32; u='°F'; }
+                  return `Result: <b class="text-2xl">${formatNum(res)}</b> ${u}`;
+              } },
+
+            // --- FINANCIAL ---
+            { id: 'profit-loss', title: 'Profit & Loss', category: 'Financial', icon: 'fa-money-bill-trend-up', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'cost', label:'Cost Price', type:'number'}, {id:'sell', label:'Selling Price', type:'number'}],
+              logic: (v) => {
+                  const p = v.sell - v.cost; const pp = (p/v.cost)*100;
+                  return p >= 0 ? `<div class="text-green-600 font-bold">Profit: ${formatBDT(p)}<br>(${pp.toFixed(2)}%)</div>` : `<div class="text-red-500 font-bold">Loss: ${formatBDT(Math.abs(p))}<br>(${Math.abs(pp).toFixed(2)}%)</div>`;
+              } },
+
+            { id: 'salary-calc', title: 'Salary Calculator', category: 'Financial', icon: 'fa-briefcase', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'gross', label:'Monthly Gross (৳)', type:'number'}, {id:'tax', label:'Tax/Deductions (%)', type:'number'}],
+              logic: (v) => `Net Monthly: <b class="text-xl text-bd-green">${formatBDT(v.gross * (1 - v.tax/100))}</b>` },
+
+            { id: 'expense-calc', title: 'Expense Calc', category: 'Financial', icon: 'fa-receipt', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'generator',
+               inputs: [{id:'items', label:'Items (Name: Amount, comma sep)', type:'text'}],
+               generate: (v) => {
+                   let total = 0; const list = v.items.split(',').map(i => {
+                       const p = i.split(':'); if(p.length < 2) return null;
+                       const amt = parseFloat(p[1]); if(isNaN(amt)) return null;
+                       total += amt; return `<li class="flex justify-between text-sm"><span>${p[0]}</span><span>${formatBDT(amt)}</span></li>`;
+                   }).filter(x=>x).join('');
+                   return `<ul class="space-y-1 mb-2">${list}</ul><div class="border-t pt-2 font-bold text-right">Total: ${formatBDT(total)}</div>`;
+               } },
+
+            { id: 'savings-calc', title: 'Savings Projection', category: 'Financial', icon: 'fa-piggy-bank', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'init', label:'Initial', type:'number'}, {id:'monthly', label:'Monthly Deposit', type:'number'}, {id:'months', label:'Months', type:'number'}],
+              logic: (v) => `Total Savings: <b class="text-xl text-bd-green">${formatBDT(v.init + (v.monthly * v.months))}</b>` },
+
+            { id: 'emi-calc', title: 'EMI Calculator', category: 'Financial', icon: 'fa-building-columns', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'p', label:'Loan Amount', type:'number'}, {id:'r', label:'Annual Interest %', type:'number'}, {id:'n', label:'Months', type:'number'}],
+              logic: (v) => {
+                  const r = v.r / 12 / 100;
+                  const emi = v.p * r * Math.pow(1+r, v.n) / (Math.pow(1+r, v.n) - 1);
+                  return `<div class="text-center"><p class="text-xs uppercase text-slate-500">Monthly EMI</p><p class="text-2xl font-bold text-bd-green">${formatBDT(emi)}</p><p class="text-xs text-slate-400 mt-1">Total Pay: ${formatBDT(emi*v.n)}</p></div>`;
+              } },
+
+            { id: 'interest-calc', title: 'Interest Calc', category: 'Financial', icon: 'fa-percent', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'p', label:'Principal', type:'number'}, {id:'r', label:'Rate %', type:'number'}, {id:'t', label:'Years', type:'number'}],
+              logic: (v) => {
+                  const si = (v.p * v.r * v.t) / 100;
+                  const ci = v.p * Math.pow((1 + v.r/100), v.t) - v.p;
+                  return `Simple Interest: <b>${formatBDT(si)}</b><br>Compound Interest: <b>${formatBDT(ci)}</b>`;
+              } },
+
+            { id: 'roi-calc', title: 'ROI Calculator', category: 'Financial', icon: 'fa-chart-line', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+               fields: [{id:'inv', label:'Investment', type:'number'}, {id:'ret', label:'Return', type:'number'}],
+               logic: (v) => `ROI: <b class="text-xl">${(((v.ret - v.inv)/v.inv)*100).toFixed(2)}%</b>` },
+
+            { id: 'pricing-calc', title: 'Pricing Calc', category: 'Financial', icon: 'fa-tag', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+               fields: [{id:'cost', label:'Cost', type:'number'}, {id:'margin', label:'Margin %', type:'number'}, {id:'tax', label:'Tax %', type:'number'}],
+               logic: (v) => {
+                   const sell = v.cost / (1 - v.margin/100);
+                   const final = sell * (1 + v.tax/100);
+                   return `Base: ${formatBDT(sell)}<br>Final Price: <b class="text-bd-green">${formatBDT(final)}</b>`;
+               } },
+
+            { id: 'budget-calc', title: 'Budget Calculator', category: 'Financial', icon: 'fa-wallet', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+               fields: [{id:'inc', label:'Income', type:'number'}, {id:'exp', label:'Expenses', type:'number'}],
+               logic: (v) => {
+                   const rem = v.inc - v.exp;
+                   return rem >= 0 ? `Surplus: <b class="text-green-600">${formatBDT(rem)}</b>` : `Deficit: <b class="text-red-500">${formatBDT(rem)}</b>`;
+               } },
+
+            { id: 'break-even', title: 'Break Even', category: 'Financial', icon: 'fa-scale-unbalanced', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+               fields: [{id:'fixed', label:'Fixed Costs', type:'number'}, {id:'price', label:'Price/Unit', type:'number'}, {id:'var', label:'Var Cost/Unit', type:'number'}],
+               logic: (v) => `Break Even: <b>${Math.ceil(v.fixed / (v.price - v.var))} units</b>` },
+            
+            { id: 'zakat-calc', title: 'Zakat Calculator', category: 'Financial', icon: 'fa-hand-holding-heart', color: 'text-bd-green', bg: 'bg-emerald-100', type: 'calculator',
+              fields: [{id:'assets', label:'Net Assets (Cash/Gold)', type:'number'}, {id:'liab', label:'Liabilities', type:'number'}],
+              logic: (v) => {
+                  const net = v.assets - v.liab;
+                  if(net<=0) return 'No Zakat Due';
+                  return `Zakat (2.5%): <b class="text-xl text-bd-green">${formatBDT(net * 0.025)}</b>`;
+              } },
+
+            // --- BUSINESS ---
+            { id: 'markup-calc', title: 'Markup Calculator', category: 'Business', icon: 'fa-arrow-trend-up', color: 'text-indigo-600', bg: 'bg-indigo-100', type: 'calculator',
+               fields: [{id:'cost', label:'Cost', type:'number'}, {id:'markup', label:'Markup %', type:'number'}],
+               logic: (v) => `Selling Price: <b>${formatBDT(v.cost * (1 + v.markup/100))}</b>` },
+            
+            { id: 'discount-calc', title: 'Discount Calc', category: 'Business', icon: 'fa-tags', color: 'text-indigo-600', bg: 'bg-indigo-100', type: 'calculator',
+               fields: [{id:'price', label:'Price', type:'number'}, {id:'disc', label:'Discount %', type:'number'}],
+               logic: (v) => {
+                   const saved = v.price * v.disc/100;
+                   return `Save: ${formatBDT(saved)}<br>Final: <b>${formatBDT(v.price - saved)}</b>`;
+               } },
+
+            { id: 'commission-calc', title: 'Commission', category: 'Business', icon: 'fa-handshake', color: 'text-indigo-600', bg: 'bg-indigo-100', type: 'calculator',
+               fields: [{id:'sales', label:'Sales Amt', type:'number'}, {id:'rate', label:'Rate %', type:'number'}],
+               logic: (v) => `Commission: <b>${formatBDT(v.sales * v.rate/100)}</b>` },
+
+            { id: 'inventory-calc', title: 'Inventory Value', category: 'Business', icon: 'fa-boxes-stacked', color: 'text-indigo-600', bg: 'bg-indigo-100', type: 'calculator',
+               fields: [{id:'units', label:'Units', type:'number'}, {id:'cost', label:'Cost/Unit', type:'number'}],
+               logic: (v) => `Total Value: <b>${formatBDT(v.units * v.cost)}</b>` },
+
+            { id: 'hourly-rate', title: 'Hourly Rate', category: 'Business', icon: 'fa-user-clock', color: 'text-indigo-600', bg: 'bg-indigo-100', type: 'calculator',
+               fields: [{id:'hourly', label:'Hourly Rate', type:'number'}, {id:'hours', label:'Hours/Week', type:'number'}],
+               logic: (v) => `Weekly: ${formatBDT(v.hourly * v.hours)}<br>Monthly: <b>${formatBDT(v.hourly * v.hours * 4)}</b>` },
+
+            // --- STUDENT ---
+            { id: 'gpa-calc', title: 'GPA (BD 5.0)', category: 'Student', icon: 'fa-graduation-cap', color: 'text-orange-500', bg: 'bg-orange-100', type: 'generator',
+               inputs: [{id:'grades', label:'Grades (A+, A, A-, B, C, D, F comma sep)', type:'text'}],
+               generate: (v) => {
+                   const map = {'A+':5, 'A':4, 'A-':3.5, 'B':3, 'C':2, 'D':1, 'F':0};
+                   const grades = v.grades.toUpperCase().split(',').map(g=>g.trim());
+                   let total = 0, count = 0;
+                   grades.forEach(g => { if(map[g] !== undefined) { total += map[g]; count++; }});
+                   if(!count) return 'Invalid grades';
+                   return `GPA: <b class="text-2xl text-orange-600">${(total/count).toFixed(2)}</b>`;
+               } },
+            
+            { id: 'cgpa-calc', title: 'CGPA Calculator', category: 'Student', icon: 'fa-scroll', color: 'text-orange-500', bg: 'bg-orange-100', type: 'calculator',
+               fields: [{id:'curr', label:'Current CGPA', type:'number'}, {id:'creds', label:'Total Creds', type:'number'}, {id:'sem_gpa', label:'Sem GPA', type:'number'}, {id:'sem_creds', label:'Sem Creds', type:'number'}],
+               logic: (v) => `New CGPA: <b>${((v.curr * v.creds + v.sem_gpa * v.sem_creds) / (v.creds + v.sem_creds)).toFixed(2)}</b>` },
+
+            { id: 'grade-conv', title: '% to Grade', category: 'Student', icon: 'fa-a', color: 'text-orange-500', bg: 'bg-orange-100', type: 'calculator',
+               fields: [{id:'pct', label:'Percentage', type:'number'}],
+               logic: (v) => {
+                   let g='F'; if(v.pct>=80)g='A+'; else if(v.pct>=70)g='A'; else if(v.pct>=60)g='A-'; else if(v.pct>=50)g='B'; else if(v.pct>=40)g='C'; else if(v.pct>=33)g='D';
+                   return `Grade: <b class="text-xl">${g}</b>`;
+               } },
+
+            { id: 'study-time', title: 'Study Time', category: 'Student', icon: 'fa-book-open', color: 'text-orange-500', bg: 'bg-orange-100', type: 'calculator',
+               fields: [{id:'credits', label:'Credits', type:'number'}],
+               logic: (v) => `Study Goal: <b>${(v.credits * 3)} hours/week</b>` },
+
+            { id: 'exam-score', title: 'Final Exam Target', category: 'Student', icon: 'fa-marker', color: 'text-orange-500', bg: 'bg-orange-100', type: 'calculator',
+               fields: [{id:'curr', label:'Current %', type:'number'}, {id:'target', label:'Target %', type:'number'}, {id:'weight', label:'Final Weight %', type:'number'}],
+               logic: (v) => `Score needed on final: <b>${((v.target - (v.curr * (1 - v.weight/100))) / (v.weight/100)).toFixed(1)}%</b>` },
+
+            // --- HEALTH ---
+            { id: 'bmi-calc', title: 'BMI Calculator', category: 'Health', icon: 'fa-heart-pulse', color: 'text-rose-500', bg: 'bg-rose-100', type: 'calculator',
+               fields: [{id:'w', label:'Weight (kg)', type:'number'}, {id:'h', label:'Height (cm)', type:'number'}],
+               logic: (v) => {
+                   const bmi = v.w / Math.pow(v.h/100, 2);
+                   let s = 'Normal'; if(bmi<18.5)s='Underweight'; if(bmi>=25)s='Overweight'; if(bmi>=30)s='Obese';
+                   return `BMI: <b>${bmi.toFixed(1)}</b> (${s})`;
+               } },
+
+            { id: 'calorie-calc', title: 'Calorie Calc', category: 'Health', icon: 'fa-fire', color: 'text-rose-500', bg: 'bg-rose-100', type: 'calculator',
+               fields: [{id:'w', label:'Weight (kg)', type:'number'}, {id:'h', label:'Height (cm)', type:'number'}, {id:'a', label:'Age', type:'number'}],
+               logic: (v) => `BMR: <b>${(10*v.w + 6.25*v.h - 5*v.a + 5).toFixed(0)} kcal/day</b>` },
+
+            { id: 'water-calc', title: 'Water Intake', category: 'Health', icon: 'fa-glass-water', color: 'text-rose-500', bg: 'bg-rose-100', type: 'calculator',
+               fields: [{id:'w', label:'Weight (kg)', type:'number'}],
+               logic: (v) => `Goal: <b>${(v.w * 0.033).toFixed(1)} Liters/day</b>` },
+
+            { id: 'step-goal', title: 'Step Goal', category: 'Health', icon: 'fa-shoe-prints', color: 'text-rose-500', bg: 'bg-rose-100', type: 'calculator',
+               fields: [{id:'dist', label:'Target km', type:'number'}],
+               logic: (v) => `Steps: <b>${Math.round(v.dist * 1312)}</b>` },
+
+            // --- TIME & PRODUCTIVITY ---
+            { id: 'duration-calc', title: 'Duration Calc', category: 'Time', icon: 'fa-stopwatch', color: 'text-cyan-600', bg: 'bg-cyan-100', type: 'calculator',
+               fields: [{id:'h', label:'Hours', type:'number'}, {id:'m', label:'Min', type:'number'}, {id:'s', label:'Sec', type:'number'}],
+               logic: (v) => `Total Min: ${(v.h*60 + v.m + v.s/60).toFixed(2)}<br>Total Sec: ${v.h*3600 + v.m*60 + v.s}` },
+
+            { id: 'pomodoro-calc', title: 'Pomodoro Calc', category: 'Time', icon: 'fa-clock', color: 'text-cyan-600', bg: 'bg-cyan-100', type: 'calculator',
+               fields: [{id:'hours', label:'Available Hours', type:'number'}],
+               logic: (v) => `You can fit <b>${Math.floor(v.hours * 60 / 30)}</b> cycles.` },
+
+            { id: 'countdown-calc', title: 'Countdown', category: 'Time', icon: 'fa-hourglass-half', color: 'text-cyan-600', bg: 'bg-cyan-100', type: 'generator',
+               inputs: [{id:'date', label:'Target Date', type:'date'}],
+               generate: (v) => {
+                   const d = Math.ceil((new Date(v.date) - new Date()) / (86400000));
+                   return d > 0 ? `<b>${d} days</b> to go!` : 'Date passed';
+               } },
+
+            { id: 'sleep-calc', title: 'Sleep Calculator', category: 'Time', icon: 'fa-bed', color: 'text-cyan-600', bg: 'bg-cyan-100', type: 'generator',
+               inputs: [{id:'wake', label:'Wake Time', type:'time'}],
+               generate: (v) => `Sleep around <b>${v.wake} - 7.5h</b>` },
+
+            { id: 'work-hours', title: 'Work Hours', category: 'Time', icon: 'fa-briefcase-clock', color: 'text-cyan-600', bg: 'bg-cyan-100', type: 'calculator',
+               fields: [{id:'in', label:'Start (24h)', type:'number'}, {id:'out', label:'End (24h)', type:'number'}, {id:'break', label:'Break (h)', type:'number'}],
+               logic: (v) => `Worked: <b>${(v.out - v.in - v.break).toFixed(1)} hrs</b>` },
+
+            // --- MARKETING ---
+            { id: 'engagement-calc', title: 'Engagement Rate', category: 'Marketing', icon: 'fa-thumbs-up', color: 'text-purple-600', bg: 'bg-purple-100', type: 'calculator',
+               fields: [{id:'likes', label:'Interactions', type:'number'}, {id:'followers', label:'Followers', type:'number'}],
+               logic: (v) => `Rate: <b>${((v.likes/v.followers)*100).toFixed(2)}%</b>` },
+
+            { id: 'ctr-calc', title: 'CTR Calculator', category: 'Marketing', icon: 'fa-computer-mouse', color: 'text-purple-600', bg: 'bg-purple-100', type: 'calculator',
+               fields: [{id:'clicks', label:'Clicks', type:'number'}, {id:'imp', label:'Impressions', type:'number'}],
+               logic: (v) => `CTR: <b>${((v.clicks/v.imp)*100).toFixed(2)}%</b>` },
+
+            { id: 'conv-calc', title: 'Conversion Rate', category: 'Marketing', icon: 'fa-filter', color: 'text-purple-600', bg: 'bg-purple-100', type: 'calculator',
+               fields: [{id:'conv', label:'Conversions', type:'number'}, {id:'visitors', label:'Visitors', type:'number'}],
+               logic: (v) => `Conversion: <b>${((v.conv/v.visitors)*100).toFixed(2)}%</b>` },
+
+            { id: 'ad-budget', title: 'Ad Budget', category: 'Marketing', icon: 'fa-sack-dollar', color: 'text-purple-600', bg: 'bg-purple-100', type: 'calculator',
+               fields: [{id:'cpc', label:'CPC', type:'number'}, {id:'clicks', label:'Target Clicks', type:'number'}],
+               logic: (v) => `Budget: <b>${formatBDT(v.cpc * v.clicks)}</b>` },
+
+            // --- MATH ---
+            { id: 'fraction-calc', title: 'Fraction Calc', category: 'Math', icon: 'fa-divide', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'n', label:'Numerator', type:'number'}, {id:'d', label:'Denominator', type:'number'}],
+               logic: (v) => `Decimal: ${v.n/v.d}<br>Percent: ${((v.n/v.d)*100).toFixed(2)}%` },
+
+            { id: 'pct-change', title: '% Change', category: 'Math', icon: 'fa-arrow-trend-down', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'old', label:'Old', type:'number'}, {id:'new', label:'New', type:'number'}],
+               logic: (v) => {
+                   const c = ((v.new - v.old) / v.old) * 100;
+                   return c > 0 ? `<b class="text-green-600">+${c.toFixed(2)}%</b>` : `<b class="text-red-500">${c.toFixed(2)}%</b>`;
+               } },
+
+            { id: 'power-root', title: 'Power & Root', category: 'Math', icon: 'fa-superscript', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'n', label:'Num', type:'number'}, {id:'p', label:'Pow', type:'number'}],
+               logic: (v) => `Pow: ${Math.pow(v.n,v.p)}<br>Sqrt: ${Math.sqrt(v.n).toFixed(4)}` },
+
+            { id: 'factorial-calc', title: 'Factorial', category: 'Math', icon: 'fa-exclamation', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'n', label:'Number', type:'number'}],
+               logic: (v) => { let f=1; for(let i=1;i<=v.n;i++)f*=i; return `Factorial: <b>${f}</b>`; } },
+
+            { id: 'prime-check', title: 'Prime Checker', category: 'Math', icon: 'fa-check-double', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'n', label:'Number', type:'number'}],
+               logic: (v) => {
+                   if(v.n<=1) return 'Not Prime';
+                   for(let i=2; i<=Math.sqrt(v.n); i++) if(v.n%i===0) return 'Not Prime';
+                   return '<b>Prime Number</b>';
+               } },
+
+            { id: 'lcm-gcd', title: 'LCM & GCD', category: 'Math', icon: 'fa-calculator', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'a', label:'A', type:'number'}, {id:'b', label:'B', type:'number'}],
+               logic: (v) => {
+                   const gcd = (a,b) => !b ? a : gcd(b, a%b); const d = gcd(v.a, v.b);
+                   return `GCD: ${d} <br>LCM: ${(v.a*v.b)/d}`;
+               } },
+
+            { id: 'eq-solver', title: 'Linear Eq Solver', category: 'Math', icon: 'fa-equals', color: 'text-slate-600', bg: 'bg-slate-200', type: 'calculator',
+               fields: [{id:'a', label:'a (ax+b=0)', type:'number'}, {id:'b', label:'b', type:'number'}],
+               logic: (v) => `x = <b>${(-v.b/v.a).toFixed(4)}</b>` },
+
+            // --- TECH ---
+            { id: 'data-size', title: 'Data Size', category: 'Tech', icon: 'fa-database', color: 'text-gray-800', bg: 'bg-gray-200', type: 'calculator',
+               fields: [{id:'gb', label:'GB', type:'number'}],
+               logic: (v) => `MB: ${v.gb*1024}<br>TB: ${(v.gb/1024).toFixed(4)}` },
+
+            { id: 'dl-time', title: 'Download Time', category: 'Tech', icon: 'fa-download', color: 'text-gray-800', bg: 'bg-gray-200', type: 'calculator',
+               fields: [{id:'size', label:'Size (GB)', type:'number'}, {id:'speed', label:'Speed (Mbps)', type:'number'}],
+               logic: (v) => `Time: <b>${((v.size * 1024 * 8) / v.speed / 60).toFixed(1)} mins</b>` },
+
+            { id: 'pass-score', title: 'Password Score', category: 'Tech', icon: 'fa-key', color: 'text-gray-800', bg: 'bg-gray-200', type: 'generator',
+               inputs: [{id:'p', label:'Password', type:'text'}],
+               generate: (v) => {
+                   let s=0; const p=v.p; if(p.length>8)s+=20; if(/[A-Z]/.test(p))s+=20; if(/[0-9]/.test(p))s+=20; if(/[^A-Za-z0-9]/.test(p))s+=20;
+                   return `Score: <b>${s}/80</b>`;
+               } },
+            
+            { id: 'contrast-ratio', title: 'Contrast Ratio', category: 'Tech', icon: 'fa-adjust', color: 'text-gray-800', bg: 'bg-gray-200', type: 'custom' },
+            
+            { id: 'aspect-ratio', title: 'Aspect Ratio', category: 'Tech', icon: 'fa-desktop', color: 'text-gray-800', bg: 'bg-gray-200', type: 'calculator',
+               fields: [{id:'w', label:'Width', type:'number'}, {id:'h', label:'Height', type:'number'}],
+               logic: (v) => { const gcd = (a,b) => !b ? a : gcd(b, a%b); const d = gcd(v.w, v.h); return `Ratio: <b>${v.w/d}:${v.h/d}</b>`; } },
+
+            // --- LIFE ---
+            { id: 'goal-feasibility', title: 'Goal Feasibility', category: 'Life', icon: 'fa-bullseye', color: 'text-teal-600', bg: 'bg-teal-100', type: 'calculator',
+               fields: [{id:'cost', label:'Cost', type:'number'}, {id:'save', label:'Monthly Save', type:'number'}],
+               logic: (v) => `Time: <b>${(v.cost/v.save).toFixed(1)} months</b>` },
+
+            { id: 'buy-wait', title: 'Buy or Wait', category: 'Life', icon: 'fa-scale-balanced', color: 'text-teal-600', bg: 'bg-teal-100', type: 'generator',
+               inputs: [{id:'price', label:'Price', type:'number'}, {id:'days', label:'Days Worked', type:'number'}],
+               generate: (v) => `Wait <b>${v.days} days</b> before buying.` },
+
+            { id: 'time-waste', title: 'Time Wasted', category: 'Life', icon: 'fa-trash-can', color: 'text-teal-600', bg: 'bg-teal-100', type: 'calculator',
+               fields: [{id:'min', label:'Mins/Day', type:'number'}],
+               logic: (v) => `Yearly Loss: <b>${(v.min*365/60).toFixed(1)} hours</b>` },
+
+            { id: 'prod-score', title: 'Productivity Score', category: 'Life', icon: 'fa-star', color: 'text-teal-600', bg: 'bg-teal-100', type: 'calculator',
+               fields: [{id:'done', label:'Done', type:'number'}, {id:'total', label:'Planned', type:'number'}],
+               logic: (v) => `Score: <b>${((v.done/v.total)*100).toFixed(0)}/100</b>` },
+
+            { id: 'stress-score', title: 'Stress Check', category: 'Life', icon: 'fa-face-tired', color: 'text-teal-600', bg: 'bg-teal-100', type: 'calculator',
+               fields: [{id:'h', label:'Work Hours', type:'number'}],
+               logic: (v) => v.h>10 ? '<b class="text-red-500">High Stress</b>' : '<b class="text-green-500">Normal</b>' },
+
+            // --- FUN ---
+            { id: 'age-calc', title: 'Age Calculator', category: 'Fun', icon: 'fa-cake-candles', color: 'text-pink-500', bg: 'bg-pink-100', type: 'generator',
+               inputs: [{id:'dob', label:'Date of Birth', type:'date'}],
+               generate: (v) => v.dob ? `Age: <b>${Math.abs(new Date(Date.now() - new Date(v.dob).getTime()).getUTCFullYear() - 1970)}</b>` : 'Select date' },
+
+            { id: 'love-calc', title: 'Love Calculator', category: 'Fun', icon: 'fa-heart', color: 'text-pink-500', bg: 'bg-pink-100', type: 'generator',
+               inputs: [{id:'n1', label:'Name 1', type:'text'}, {id:'n2', label:'Name 2', type:'text'}],
+               generate: (v) => `Match: <b>${(v.n1.length + v.n2.length) * 7 % 100}%</b> ❤️` },
+
+            { id: 'lucky-num', title: 'Lucky Number', category: 'Fun', icon: 'fa-clover', color: 'text-pink-500', bg: 'bg-pink-100', type: 'generator',
+               inputs: [{id:'name', label:'Name', type:'text'}],
+               generate: (v) => `Lucky #: <b>${v.name.length * 3 % 9 + 1}</b>` },
+
+            { id: 'rand-decision', title: 'Random Pick', category: 'Fun', icon: 'fa-dice', color: 'text-pink-500', bg: 'bg-pink-100', type: 'generator',
+               inputs: [{id:'opt', label:'Options (comma sep)', type:'text'}],
+               generate: (v) => { const o=v.opt.split(','); return `Pick: <b>${o[Math.floor(Math.random()*o.length)].trim()}</b>`; } },
+
+            { id: 'mood-score', title: 'Mood Check', category: 'Fun', icon: 'fa-face-smile', color: 'text-pink-500', bg: 'bg-pink-100', type: 'generator',
+               inputs: [{id:'rate', label:'Rate 1-10', type:'number'}],
+               generate: (v) => v.rate>7 ? '🌟 Great!' : (v.rate>4 ? '🙂 Okay' : '🌧️ Tough') }
+        ];
+
+        // --- 2. Application Engine ---
+
+        const app = {
+            activeCategory: 'All',
+
+            init: () => {
+                app.renderSidebar();
+                app.setupSearch();
+                window.addEventListener('hashchange', app.handleRoute);
+                app.handleRoute(); 
+            },
+
+            // --- ROUTER ---
+            navToHome: () => window.location.hash = '',
+            navToCategory: (cat) => window.location.hash = `cat=${encodeURIComponent(cat)}`,
+            navToTool: (id) => window.location.hash = `tool=${id}`,
+            goBack: () => {
+                if (window.location.hash.startsWith('#tool')) {
+                    app.activeCategory && app.activeCategory !== 'All' ? app.navToCategory(app.activeCategory) : app.navToHome();
+                } else app.navToHome();
+            },
+
+            handleRoute: () => {
+                const hash = window.location.hash;
+                if (hash.startsWith('#tool=')) app.loadToolView(hash.split('=')[1]);
+                else if (hash.startsWith('#cat=')) app.renderDashboard(decodeURIComponent(hash.split('=')[1]));
+                else app.renderDashboard('All');
+            },
+
+            // --- VIEWS ---
+            renderDashboard: (category = 'All') => {
+                app.activeCategory = category;
+                const titleEl = document.getElementById('pageTitle');
+                const descEl = document.getElementById('pageDesc');
+                
+                titleEl.textContent = category === 'All' ? 'Dashboard' : category;
+                descEl.textContent = category === 'All' ? 'Select a tool to get started' : `Explore ${category} tools`;
+                
+                const catList = [...new Set(tools.map(t => t.category))];
+                let html = '<div class="space-y-12 pb-24">';
+                const catsToShow = category === 'All' ? catList : [category];
+
+                catsToShow.forEach(cat => {
+                    const catTools = tools.filter(t => t.category === cat);
+                    html += `
+                        <div class="animate-slide-up">
+                            <div class="flex items-center gap-3 mb-5 px-1">
+                                <h3 class="text-xl font-bold text-slate-800 tracking-tight">${cat}</h3>
+                                <div class="h-px bg-slate-200 flex-1"></div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                                ${catTools.map(tool => `
+                                    <div onclick="app.navToTool('${tool.id}')" class="tool-card group bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 cursor-pointer h-full relative overflow-hidden shadow-sm hover:shadow-lg">
+                                        <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-slate-50 to-white rounded-bl-full -mr-6 -mt-6 transition-transform group-hover:scale-150 group-hover:from-bd-light group-hover:to-white z-0"></div>
+                                        <div class="relative z-10">
+                                            <div class="flex items-start justify-between mb-3 sm:mb-4">
+                                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${tool.bg} ${tool.color} flex items-center justify-center text-lg sm:text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                                    <i class="fa-solid ${tool.icon}"></i>
+                                                </div>
+                                            </div>
+                                            <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-1 group-hover:text-bd-green transition-colors leading-tight">${tool.title}</h4>
+                                            <p class="text-[10px] sm:text-xs text-slate-500 line-clamp-2 leading-relaxed hidden sm:block">${tool.desc || 'Calculation tool.'}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                document.getElementById('viewContainer').innerHTML = html;
+                
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                if(category !== 'All') document.getElementById(`link-${category}`)?.classList.add('active');
+            },
+
+            loadToolView: (id) => {
+                const tool = tools.find(t => t.id === id);
+                if (!tool) return app.navToHome();
+                
+                document.getElementById('pageTitle').textContent = tool.title;
+                document.getElementById('pageDesc').textContent = tool.desc || '';
+
+                const container = document.getElementById('viewContainer');
+                container.innerHTML = ''; 
+
+                if (tool.type === 'calculator') app.renderCalculator(container, tool);
+                else if (tool.type === 'generator') app.renderGenerator(container, tool);
+                else if (tool.type === 'custom') app.renderCustom(container, tool);
+            },
+
+            renderSidebar: () => {
+                const nav = document.getElementById('navCategories');
+                const categories = [...new Set(tools.map(t => t.category))];
+                let html = `<button onclick="app.navToHome()" class="sidebar-link w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-600 mb-2 flex items-center gap-3">
+                    <i class="fa-solid fa-grid-2 w-5 text-center"></i> All Tools
+                </button>`;
+                
+                categories.forEach(cat => {
+                    let icon = 'fa-folder';
+                    if(cat==='Financial') icon='fa-wallet';
+                    if(cat==='Basic') icon='fa-calculator';
+                    if(cat==='Student') icon='fa-graduation-cap';
+                    if(cat==='Health') icon='fa-heart-pulse';
+                    if(cat==='Fun') icon='fa-gamepad';
+                    if(cat==='Time') icon='fa-clock';
+                    if(cat==='Marketing') icon='fa-bullhorn';
+                    
+                    html += `<button id="link-${cat}" onclick="app.navToCategory('${cat}')" class="sidebar-link w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-600 mb-2 flex items-center gap-3">
+                        <i class="fa-solid ${icon} w-5 text-center opacity-70"></i> ${cat}
+                    </button>`;
+                });
+                nav.innerHTML = html;
+            },
+
+            setupSearch: () => {
+                const handleSearch = (e) => {
+                    const term = e.target.value.toLowerCase();
+                    // Sync inputs
+                    const mobileInput = document.getElementById('mobileSearch');
+                    const globalInput = document.getElementById('globalSearch');
+                    if(e.target === mobileInput && globalInput) globalInput.value = term;
+                    if(e.target === globalInput && mobileInput) mobileInput.value = term;
+
+                    if(window.location.hash.startsWith('#tool')) app.navToHome();
+                    
+                    setTimeout(() => {
+                        document.querySelectorAll('.tool-card').forEach(card => {
+                            const title = card.querySelector('h4').textContent.toLowerCase();
+                            const parent = card.parentElement.parentElement;
+                            if (title.includes(term)) {
+                                card.style.display = 'block';
+                                parent.style.display = 'block'; 
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                        
+                        document.querySelectorAll('.animate-slide-up').forEach(section => {
+                            const visibleCards = section.querySelectorAll('.tool-card[style="display: block;"]');
+                            if(visibleCards.length === 0 && term !== '') {
+                                section.style.display = 'none';
+                            } else {
+                                section.style.display = 'block';
+                            }
+                        });
+                    }, 50);
+                };
+
+                const globalInput = document.getElementById('globalSearch');
+                const mobileInput = document.getElementById('mobileSearch');
+                if(globalInput) globalInput.addEventListener('input', handleSearch);
+                if(mobileInput) mobileInput.addEventListener('input', handleSearch);
+            }
+        };
+
+        // --- 3. Renderers ---
+
+        const backBtn = `<button onclick="app.goBack()" class="mb-6 inline-flex items-center text-sm font-bold text-slate-500 hover:text-bd-green transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md group">
+            <i class="fa-solid fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i> Back
+        </button>`;
+
+        const renderToolLayout = (container, tool, contentHtml, btnLabel, actionStr) => {
+            container.innerHTML = `
+                <div class="animate-slide-up mx-auto max-w-4xl">
+                    ${backBtn}
+                    <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden flex flex-col md:flex-row min-h-[400px]">
+                        <!-- Input Section -->
+                        <div class="p-8 md:w-3/5 border-b md:border-b-0 md:border-r border-slate-100 bg-white relative z-10">
+                             <div class="flex items-center gap-4 mb-8">
+                                <div class="w-14 h-14 rounded-2xl ${tool.bg} ${tool.color} flex items-center justify-center text-2xl shadow-inner"><i class="fa-solid ${tool.icon}"></i></div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-slate-800 leading-none mb-1.5 tracking-tight">${tool.title}</h3>
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">${tool.category}</span>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                ${contentHtml}
+                                <button onclick="${actionStr}" class="w-full bg-gradient-to-r from-bd-green to-bd-darkGreen hover:to-emerald-900 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-bd-green/30 active:scale-95 flex items-center justify-center gap-2 text-sm tracking-wide uppercase">
+                                    <i class="fa-solid fa-bolt"></i> ${btnLabel}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Result Section -->
+                        <div class="md:w-2/5 bg-slate-50/50 p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                             <!-- Decorative bg elements -->
+                             <div class="absolute top-0 right-0 w-32 h-32 bg-bd-green/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                             <div class="absolute bottom-0 left-0 w-32 h-32 bg-bd-red/5 rounded-full blur-3xl -ml-10 -mb-10"></div>
+                             
+                             <div id="result-placeholder" class="text-slate-400 relative z-10">
+                                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 shadow-sm border border-slate-100">
+                                    <i class="fa-solid fa-chart-simple text-3xl"></i>
+                                </div>
+                                <p class="text-sm font-medium">Enter values to see results</p>
+                             </div>
+                             <div id="result-${tool.id}" class="hidden w-full animate-slide-up relative z-10">
+                                <!-- Results injected here -->
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        app.renderCalculator = (container, tool) => {
+            const fieldsHtml = tool.fields.map(f => `
+                <div class="input-group">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 ml-1 transition-colors">${f.label}</label>
+                    ${f.type === 'select' 
+                        ? `<div class="relative"><select id="inp-${f.id}" class="custom-input w-full bg-slate-50 border-slate-200 border rounded-xl p-3.5 text-slate-700 appearance-none font-bold cursor-pointer hover:bg-white transition-colors">${f.options.map(o=>`<option>${o}</option>`).join('')}</select><i class="fa-solid fa-chevron-down absolute right-4 top-4.5 text-slate-400 pointer-events-none text-xs"></i></div>`
+                        : `<div class="relative"><input type="number" id="inp-${f.id}" class="custom-input w-full bg-slate-50 border-slate-200 border rounded-xl p-3.5 pl-4 text-slate-800 font-bold placeholder-slate-300 transition-all" placeholder="0"></div>`
+                    }
+                </div>
+            `).join('');
+            renderToolLayout(container, tool, fieldsHtml, 'Calculate', `app.runLogic('${tool.id}')`);
+        };
+
+        app.runLogic = (id) => {
+            const tool = tools.find(t => t.id === id);
+            const values = {};
+            tool.fields.forEach(f => {
+                if(f.type==='select') values[f.id] = document.getElementById(`inp-${f.id}`).value;
+                else values[f.id] = parseFloat(document.getElementById(`inp-${f.id}`).value) || 0;
+            });
+            const resContainer = document.getElementById(`result-${id}`);
+            document.getElementById('result-placeholder').style.display = 'none';
+            resContainer.innerHTML = tool.logic(values);
+            resContainer.classList.remove('hidden');
+        };
+
+        app.renderGenerator = (container, tool) => {
+            const inputsHtml = tool.inputs.map(f => `
+                <div class="input-group">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 ml-1 transition-colors">${f.label}</label>
+                    <input type="${f.type}" id="gen-${f.id}" class="custom-input w-full bg-slate-50 border-slate-200 border rounded-xl p-3.5 text-slate-700 font-medium" placeholder="...">
+                </div>
+            `).join('');
+            renderToolLayout(container, tool, inputsHtml, 'Generate', `app.runGen('${tool.id}')`);
+        };
+
+        app.runGen = (id) => {
+            const tool = tools.find(t => t.id === id);
+            const values = {};
+            tool.inputs.forEach(f => values[f.id] = document.getElementById(`gen-${f.id}`).value);
+            const resContainer = document.getElementById(`result-${id}`);
+            document.getElementById('result-placeholder').style.display = 'none';
+            resContainer.innerHTML = tool.generate(values);
+            resContainer.classList.remove('hidden');
+        };
+
+        app.renderCustom = (container, tool) => {
+            // Re-implementation of contrast ratio custom logic inside standard layout
+             if(tool.id === 'contrast-ratio') {
+                const html = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Text Color</label><input type="color" id="fg" value="#000000" class="w-full h-12 rounded-lg cursor-pointer border-2 border-slate-100"></div>
+                        <div><label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Background</label><input type="color" id="bg" value="#ffffff" class="w-full h-12 rounded-lg cursor-pointer border-2 border-slate-100"></div>
+                    </div>
+                `;
+                
+                // We use a slightly modified render layout for custom logic hook
+                container.innerHTML = `
+                <div class="animate-slide-up mx-auto max-w-4xl">
+                    ${backBtn}
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col md:flex-row min-h-[400px]">
+                        <div class="p-8 md:w-3/5 border-r border-slate-100 relative z-10">
+                             <div class="flex items-center gap-4 mb-8">
+                                <div class="w-14 h-14 rounded-2xl ${tool.bg} ${tool.color} flex items-center justify-center text-2xl shadow-inner"><i class="fa-solid ${tool.icon}"></i></div>
+                                <div><h3 class="text-2xl font-bold text-slate-800">${tool.title}</h3><span class="text-xs font-bold uppercase text-slate-400 bg-slate-50 px-2 py-0.5 rounded">${tool.category}</span></div>
+                            </div>
+                            <div class="space-y-6">
+                                ${html}
+                                <button onclick="app.calcContrast()" class="w-full bg-bd-green text-white font-bold py-4 rounded-xl shadow-lg">Check Contrast</button>
+                            </div>
+                        </div>
+                        <div class="md:w-2/5 bg-slate-50 p-8 flex flex-col items-center justify-center text-center">
+                             <div id="preview-box" class="p-6 text-2xl font-bold border rounded-xl mb-4 w-full shadow-sm transition-colors">Aa Text</div>
+                             <div id="ratio-res" class="text-2xl font-bold text-slate-800">Ratio: 21.00:1</div>
+                        </div>
+                    </div>
+                </div>`;
+                
+                app.calcContrast = () => {
+                    const fg = document.getElementById('fg').value;
+                    const bg = document.getElementById('bg').value;
+                    const box = document.getElementById('preview-box');
+                    box.style.color = fg; box.style.backgroundColor = bg;
+                    
+                    const getLum = (hex) => {
+                        const rgb = parseInt(hex.slice(1), 16);
+                        const r = (rgb >> 16) & 0xff; const g = (rgb >>  8) & 0xff; const b = (rgb >>  0) & 0xff;
+                        const a = [r, g, b].map(v => {
+                            v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+                        });
+                        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+                    };
+                    const l1 = getLum(fg) + 0.05; const l2 = getLum(bg) + 0.05;
+                    const ratio = l1 > l2 ? l1 / l2 : l2 / l1;
+                    document.getElementById('ratio-res').textContent = `Ratio: ${ratio.toFixed(2)}:1`;
+                };
+            }
+        };
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebarOverlay');
+            
+            if (sb.classList.contains('-translate-x-full')) {
+                sb.classList.remove('-translate-x-full');
+                ov.classList.remove('hidden');
+                setTimeout(() => ov.classList.remove('opacity-0'), 10);
+            } else {
+                sb.classList.add('-translate-x-full');
+                ov.classList.add('opacity-0');
+                setTimeout(() => ov.classList.add('hidden'), 300);
+            }
+        }
+
+        // Init
+        app.init();
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
